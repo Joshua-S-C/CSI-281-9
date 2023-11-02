@@ -1,4 +1,4 @@
-//
+//  Joshua Sinclair Chong
 //  WeightedGraph.h
 //  
 //  Defines the WeightedGraph class.
@@ -115,10 +115,10 @@ namespace csi281 {
         // Returns a pair containing the pathMap (how to get to each vertex)
         // and the weightMap (how far each vertex is from the start)
         pair<unordered_map<V, V>, unordered_map<V, W>> dijkstra(const V &start) {
-            // how did we get to each vertex
+            // how did we get to each vertex (explored)
             unordered_map<V, V> parents = unordered_map<V, V>();
-            parents[start] = start;
-            // the weight to get to each vertex
+            parents[start] = start; //parents[where_to] = where_from
+            // the (accumulated) weight to get to each vertex
             unordered_map<V, W> weights = unordered_map<V, W>();
             weights[start] = 0;
             // the next vertices to explore, will always pop/top the smallest weight
@@ -131,7 +131,7 @@ namespace csi281 {
             // NOTE: You must use the constructs defined at
             // the beginning of this method in your code.
             // NOTE: Because the majority of the grade is based on the
-            // few (10-15) lines of code you need to write here, unlike
+            // few (10-15)/18 lines of code you need to write here, unlike
             // previous assignments, I will not help you write it.
             // However, of course I am happy to answer any of your
             // conceptual questions around Dijkstra's algorithm

@@ -1,4 +1,4 @@
-//
+//  Joshua Sinclair Chong
 //  test.cpp
 //
 //  Tests to prove your code works.
