@@ -115,19 +115,6 @@ namespace csi281 {
         // Returns a pair containing the pathMap (how to get to each vertex)
         // and the weightMap (how far each vertex is from the start)
         pair<unordered_map<V, V>, unordered_map<V, W>> dijkstra(const V &start) {
-            // how did we get to each vertex (explored)
-            unordered_map<V, V> parents = unordered_map<V, V>();
-            parents[start] = start; //parents[where_to] = where_from
-            // the (accumulated) weight to get to each vertex
-            unordered_map<V, W> weights = unordered_map<V, W>();
-            weights[start] = 0;
-            // the next vertices to explore, will always pop/top the smallest weight
-            // pair next; note that the weight comes before the vertex for ordering purposes
-            // this is different than the order from neighborsWithWeights()
-            priority_queue<pair<W, V>, vector<pair<W, V>>, greater<pair<W, V>>> frontier = priority_queue<pair<W, V>, vector<pair<W, V>>, greater<pair<W, V>>>();
-            frontier.push(make_pair(0, start));
-            
-            // YOUR CODE HERE
             // NOTE: You must use the constructs defined at
             // the beginning of this method in your code.
             // NOTE: Because the majority of the grade is based on the
@@ -140,6 +127,34 @@ namespace csi281 {
             // from class, from your book, and you are free to
             // use other pseudocode as long as you cite it. Please
             // do not look at other C++ solutions.
+            
+            
+            unordered_map<V, V> parents = unordered_map<V, V>();    // how did we get to each vertex (explored)
+            parents[start] = start; //parents[where_to] = where_from
+            
+            unordered_map<V, W> weights = unordered_map<V, W>();    // the (accumulated) weight to get to each vertex
+            weights[start] = 0;
+
+            // the next vertices to explore, will always pop/top the smallest weight
+            // pair next; note that the weight comes before the vertex for ordering purposes
+            // this is different than the order from neighborsWithWeights()
+            priority_queue<pair<W, V>, vector<pair<W, V>>, greater<pair<W, V>>> frontier = priority_queue<pair<W, V>, vector<pair<W, V>>, greater<pair<W, V>>>();
+            frontier.push(make_pair(0, start));
+            
+            while (frontier.size() < 0) {
+                pair<W, V> current = frontier.top();
+                frontier.pop();
+                W weight = weights[current.second];
+
+                // gonna be real I forgot for each loops existed for a while lol
+                for(pair<V, W> node : neighborsWithWeights(current.second))
+                    if ((weights.find(node.first) == weights.end())
+                        || (weights[node.first] > weight + node.second)) {
+                        parents[node.first] = current.second;
+                        weights[node.first] = weight + node.second;
+                        frontier.push(make_pair(weight + node.second, node.first));
+                    }
+            }
             
             return make_pair(parents, weights);
         }
