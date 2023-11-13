@@ -173,3 +173,89 @@ TEST_CASE( "dijkstra() cityGraph2 Test", "[dijksta]" ) {
 // reuse cityGraph or cityGraph2. Cite any sources.
 // Make sure that your assertions are fairly comprehensive.
 // Look at the prior two tests as examples.
+
+TEST_CASE("dijkstra() dormGraph Test", "[dijksta]") {
+    WeightedGraph<string, float> dormGraph = WeightedGraph<string, float>();
+    // Note: These are not accurate nor proportional
+    dormGraph.addEdge("Campus", "Rowell", .5);
+    dormGraph.addEdge("Campus", "Valcour", 1);
+    dormGraph.addEdge("Campus", "Butler", 1.1);
+    dormGraph.addEdge("Campus", "North House", 99.99); // I hate living in North House :(
+
+    dormGraph.addEdge("Rowell", "Jensen", 1);
+    dormGraph.addEdge("Rowell", "South House", 10);
+    dormGraph.addEdge("Rowell", "Valcour", 5);
+    dormGraph.addEdge("Rowell", "Butler", 5);
+    dormGraph.addEdge("Rowell", "North House", 102); 
+
+    dormGraph.addEdge("Jensen", "Bankus", 1);
+    dormGraph.addEdge("Jensen", "South House", 4);
+
+    dormGraph.addEdge("Bankus", "South House", 3);
+
+    dormGraph.addEdge("Valcour", "Butler", .21f);
+    dormGraph.addEdge("Valcour", "Juniper", .5);
+    dormGraph.addEdge("Valcour", "North House", 90);
+
+    dormGraph.addEdge("Butler", "Juniper", .21f);
+
+    cout << "------dormGraph------" << endl;
+    dormGraph.debugPrint();
+
+    // Check Distances from Valcour
+    auto resultPair = dormGraph.dijkstra("Valcour");
+    auto parentResults = resultPair.first;
+    auto weightResults = resultPair.second;
+    CHECK(weightResults["North House"] == 90.0f); // Valcour -> NH = 90
+    CHECK(weightResults["South House"] == 6.5f); // Valcour -> Campus = 1, Campus -> Rowell = .5 -> Jensen = 1 -> SH -> 4 
+    CHECK(weightResults["Jensen"] == 2.5); // Vaclour -> Campus = 1, -> Rowell = .5 -> Jensen = 1
+    auto path = dormGraph.pathMapToPath(parentResults, "Jensen");
+    cout << "------dormGraph path------" << endl;
+    printPath(path);
+    // Shortest path should be Vaclour -> Campus -> Rowell -> Jensen
+    CHECK(path.size() == 4);
+    CHECK(path.front() == "Valcour");
+    CHECK(path.back() == "Jensen");
+
+    auto it = path.begin();
+    auto last = path.front();
+    for (unsigned long i = 1; i < path.size(); i++) {
+        it++;
+        auto current = *it;
+        CHECK(dormGraph.edgeExists(last, current));
+        last = current;
+    }
+
+    // Check Distances from North House
+    resultPair = dormGraph.dijkstra("North House");
+    parentResults = resultPair.first;
+    weightResults = resultPair.second;
+    
+    CHECK(weightResults["Bankus"] == 93.5f); // North House -> Valcour -> Campus -> Rowell -> Jensen -> Bankus
+    cout << "NH to Bankus" << endl;
+    path = dormGraph.pathMapToPath(parentResults, "Bankus");
+    printPath(path);
+
+    CHECK(weightResults["Juniper"] == 90.42f); // North House -> Valcour -> Butler -> Juniper
+    cout << "NH to Juniper" << endl;
+    path = dormGraph.pathMapToPath(parentResults, "Juniper");
+    printPath(path);
+
+    CHECK(weightResults["South House"] == 96.5f); // North House -> Valcour -> Campus -> Rowell -> Jensen -> South House
+    path = dormGraph.pathMapToPath(parentResults, "South House");
+    cout << "------dormGraph2 path: NH to SH------" << endl;
+    printPath(path);
+    // Shortest path: North House -> Valcour -> Campus -> Rowell -> Jensen -> South House
+    CHECK(path.size() == 6);
+    CHECK(path.front() == "North House");
+    CHECK(path.back() == "South House");
+
+    it = path.begin();
+    last = path.front();
+    for (unsigned long i = 1; i < path.size(); i++) {
+        it++;
+        auto current = *it;
+        CHECK(dormGraph.edgeExists(last, current));
+        last = current;
+    }
+}

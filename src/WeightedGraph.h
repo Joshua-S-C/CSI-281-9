@@ -141,12 +141,11 @@ namespace csi281 {
             priority_queue<pair<W, V>, vector<pair<W, V>>, greater<pair<W, V>>> frontier = priority_queue<pair<W, V>, vector<pair<W, V>>, greater<pair<W, V>>>();
             frontier.push(make_pair(0, start));
             
-            while (frontier.size() < 0) {
+            while (frontier.size() > 0) {
                 pair<W, V> current = frontier.top();
                 frontier.pop();
                 W weight = weights[current.second];
 
-                // gonna be real I forgot for each loops existed for a while lol
                 for(pair<V, W> node : neighborsWithWeights(current.second))
                     if ((weights.find(node.first) == weights.end())
                         || (weights[node.first] > weight + node.second)) {
